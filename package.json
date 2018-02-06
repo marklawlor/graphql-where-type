@@ -1,0 +1,33 @@
+{
+  "name": "graphql-where-type",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "devDependencies": {
+    "@types/graphql": "^0.12.3",
+    "@types/jest": "^22.1.1",
+    "@types/node": "^9.4.0",
+    "jest": "^22.1.4",
+    "prettier": "^1.10.2",
+    "ts-jest": "^22.0.3",
+    "typescript": "^2.7.1"
+  },
+  "jest": {
+    "moduleFileExtensions": ["ts", "tsx", "js"],
+    "modulePathIgnorePatterns": ["packages/.*/dist"],
+    "testEnvironment": "node",
+    "testMatch": ["**/*.test.(ts|tsx)"],
+    "testPathIgnorePatterns": ["/node_modules/", "/examples/"],
+    "transform": {
+      "^.+\\.tsx?$": "ts-jest"
+    },
+    "verbose": true
+  },
+  "scripts": {
+    "debug": "node --inspect-brk node_modules/.bin/jest --runInBand",
+    "test": "jest"
+  },
+  "dependencies": {
+    "graphql": "^0.12.3"
+  }
+}

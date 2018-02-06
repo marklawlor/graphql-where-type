@@ -1,0 +1,10 @@
+{
+  "compilerOptions": {
+    "declaration": true,
+    "module": "commonjs",
+    "lib": ["ES2016", "ES2017", "esnext"],
+    "moduleResolution": "node",
+    "outDir": "./dist",
+    "strict": true
+  }
+}
