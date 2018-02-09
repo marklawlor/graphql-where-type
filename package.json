@@ -13,6 +13,7 @@
     "typescript": "^2.7.1"
   },
   "jest": {
+    "mapCoverage": true,
     "moduleFileExtensions": ["ts", "tsx", "js"],
     "modulePathIgnorePatterns": ["packages/.*/dist"],
     "testEnvironment": "node",

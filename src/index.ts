@@ -21,10 +21,6 @@ export interface WhereInputTypeConfig extends GraphQLInputObjectTypeConfig {
 
 const scalarOperatorMap: { [index: string]: string[] } = {}
 
-const operators = {
-  between: {}
-}
-
 const arrayOperators = [
   "between",
   "notBetween",
@@ -110,7 +106,7 @@ export default function generateWhereInputType({
 
           acc[key] = {
             type: new GraphQLInputObjectType({
-              name: key + "Operations",
+              name: name + key + "Operations",
               fields: (): GraphQLInputFieldConfigMap => ({
                 and: { type: inputObjectType },
                 or: { type: new GraphQLList(inputObjectType) },
