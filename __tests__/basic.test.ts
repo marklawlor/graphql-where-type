@@ -1,22 +1,34 @@
 import {
   graphql,
   GraphQLInt,
+  GraphQLFloat,
   GraphQLObjectType,
   GraphQLSchema,
+  GraphQLBoolean,
   GraphQLString,
   GraphQLNonNull
 } from "graphql"
-
-import * as introspective from "./introspective"
 
 import generateWhereInputType from "../src"
 
 const TestType = new GraphQLObjectType({
   name: "Test",
   fields: () => ({
-    testField: {
+    stringField: {
       type: GraphQLString,
       resolve: () => "HelloWorld"
+    },
+    booleanField: {
+      type: GraphQLBoolean,
+      resolve: () => false
+    },
+    floatField: {
+      type: GraphQLFloat,
+      resolve: () => 0.0001
+    },
+    intField: {
+      type: GraphQLInt,
+      resolve: () => 1
     }
   })
 })
@@ -51,9 +63,6 @@ describe("Basic", () => {
         schema,
         `
           {
-            allTestTypes {
-              testField
-            }
             __type(name: "TestWhereArgs") {
               name
               kind
@@ -81,18 +90,15 @@ describe("Basic", () => {
       )
     ).resolves.toEqual({
       data: {
-        allTestTypes: {
-          testField: "HelloWorld"
-        },
         __type: {
           name: "TestWhereArgs",
           kind: "INPUT_OBJECT",
           inputFields: [
             {
-              name: "testField",
+              name: "stringField",
               type: {
                 kind: "INPUT_OBJECT",
-                name: "testFieldOperations",
+                name: "stringFieldOperations",
                 inputFields: [
                   {
                     name: "and",
@@ -111,6 +117,150 @@ describe("Basic", () => {
                         kind: "INPUT_OBJECT",
                         name: "TestWhereArgs"
                       }
+                    }
+                  },
+                  {
+                    name: "eq",
+                    type: {
+                      kind: "SCALAR",
+                      name: "String",
+                      ofType: null
+                    }
+                  },
+                  {
+                    name: "nq",
+                    type: {
+                      kind: "SCALAR",
+                      name: "String",
+                      ofType: null
+                    }
+                  },
+                  {
+                    name: "like",
+                    type: {
+                      kind: "SCALAR",
+                      name: "String",
+                      ofType: null
+                    }
+                  },
+                  {
+                    name: "notLike",
+                    type: {
+                      kind: "SCALAR",
+                      name: "String",
+                      ofType: null
+                    }
+                  },
+                  {
+                    name: "iLike",
+                    type: {
+                      kind: "SCALAR",
+                      name: "String",
+                      ofType: null
+                    }
+                  },
+                  {
+                    name: "notILike",
+                    type: {
+                      kind: "SCALAR",
+                      name: "String",
+                      ofType: null
+                    }
+                  }
+                ]
+              }
+            },
+            {
+              name: "booleanField",
+              type: {
+                kind: "INPUT_OBJECT",
+                name: "booleanFieldOperations",
+                inputFields: [
+                  {
+                    name: "and",
+                    type: {
+                      kind: "INPUT_OBJECT",
+                      name: "TestWhereArgs",
+                      ofType: null
+                    }
+                  },
+                  {
+                    name: "or",
+                    type: {
+                      kind: "LIST",
+                      name: null,
+                      ofType: {
+                        kind: "INPUT_OBJECT",
+                        name: "TestWhereArgs"
+                      }
+                    }
+                  },
+                  {
+                    name: "eq",
+                    type: {
+                      kind: "SCALAR",
+                      name: "Boolean",
+                      ofType: null
+                    }
+                  },
+                  {
+                    name: "nq",
+                    type: {
+                      kind: "SCALAR",
+                      name: "Boolean",
+                      ofType: null
+                    }
+                  },
+                  {
+                    name: "not",
+                    type: {
+                      kind: "SCALAR",
+                      name: "Boolean",
+                      ofType: null
+                    }
+                  }
+                ]
+              }
+            },
+            {
+              name: "floatField",
+              type: {
+                kind: "INPUT_OBJECT",
+                name: "floatFieldOperations",
+                inputFields: [
+                  {
+                    name: "and",
+                    type: {
+                      kind: "INPUT_OBJECT",
+                      name: "TestWhereArgs",
+                      ofType: null
+                    }
+                  },
+                  {
+                    name: "or",
+                    type: {
+                      kind: "LIST",
+                      name: null,
+                      ofType: {
+                        kind: "INPUT_OBJECT",
+                        name: "TestWhereArgs"
+                      }
+                    }
+                  },
+                  {
+                    name: "eq",
+                    type: {
+                      kind: "SCALAR",
+                      name: "Float",
+                      ofType: null
+                    }
+                  },
+                  {
+                    name: "nq",
+                    type: {
+                      kind: "SCALAR",
+                      name: "Float",
+                      ofType: null
                     }
                   },
                   {
@@ -142,30 +292,6 @@ describe("Basic", () => {
                     type: {
                       kind: "SCALAR",
                       name: "Float",
-                      ofType: null
-                    }
-                  },
-                  {
-                    name: "nq",
-                    type: {
-                      kind: "SCALAR",
-                      name: "String",
-                      ofType: null
-                    }
-                  },
-                  {
-                    name: "eq",
-                    type: {
-                      kind: "SCALAR",
-                      name: "String",
-                      ofType: null
-                    }
-                  },
-                  {
-                    name: "not",
-                    type: {
-                      kind: "SCALAR",
-                      name: "Boolean",
                       ofType: null
                     }
                   },
@@ -214,54 +340,6 @@ describe("Basic", () => {
                     }
                   },
                   {
-                    name: "like",
-                    type: {
-                      kind: "SCALAR",
-                      name: "String",
-                      ofType: null
-                    }
-                  },
-                  {
-                    name: "notLike",
-                    type: {
-                      kind: "SCALAR",
-                      name: "String",
-                      ofType: null
-                    }
-                  },
-                  {
-                    name: "iLike",
-                    type: {
-                      kind: "SCALAR",
-                      name: "String",
-                      ofType: null
-                    }
-                  },
-                  {
-                    name: "notILike",
-                    type: {
-                      kind: "SCALAR",
-                      name: "String",
-                      ofType: null
-                    }
-                  },
-                  {
-                    name: "regex",
-                    type: {
-                      kind: "SCALAR",
-                      name: "String",
-                      ofType: null
-                    }
-                  },
-                  {
-                    name: "notRegex",
-                    type: {
-                      kind: "SCALAR",
-                      name: "String",
-                      ofType: null
-                    }
-                  },
-                  {
                     name: "overlap",
                     type: {
                       kind: "LIST",
@@ -302,6 +380,170 @@ describe("Basic", () => {
                       ofType: {
                         kind: "SCALAR",
                         name: "Float"
+                      }
+                    }
+                  }
+                ]
+              }
+            },
+            {
+              name: "intField",
+              type: {
+                kind: "INPUT_OBJECT",
+                name: "intFieldOperations",
+                inputFields: [
+                  {
+                    name: "and",
+                    type: {
+                      kind: "INPUT_OBJECT",
+                      name: "TestWhereArgs",
+                      ofType: null
+                    }
+                  },
+                  {
+                    name: "or",
+                    type: {
+                      kind: "LIST",
+                      name: null,
+                      ofType: {
+                        kind: "INPUT_OBJECT",
+                        name: "TestWhereArgs"
+                      }
+                    }
+                  },
+                  {
+                    name: "eq",
+                    type: {
+                      kind: "SCALAR",
+                      name: "Int",
+                      ofType: null
+                    }
+                  },
+                  {
+                    name: "nq",
+                    type: {
+                      kind: "SCALAR",
+                      name: "Int",
+                      ofType: null
+                    }
+                  },
+                  {
+                    name: "gt",
+                    type: {
+                      kind: "SCALAR",
+                      name: "Int",
+                      ofType: null
+                    }
+                  },
+                  {
+                    name: "gte",
+                    type: {
+                      kind: "SCALAR",
+                      name: "Int",
+                      ofType: null
+                    }
+                  },
+                  {
+                    name: "lt",
+                    type: {
+                      kind: "SCALAR",
+                      name: "Int",
+                      ofType: null
+                    }
+                  },
+                  {
+                    name: "lte",
+                    type: {
+                      kind: "SCALAR",
+                      name: "Int",
+                      ofType: null
+                    }
+                  },
+                  {
+                    name: "between",
+                    type: {
+                      kind: "LIST",
+                      name: null,
+                      ofType: {
+                        kind: "SCALAR",
+                        name: "Int"
+                      }
+                    }
+                  },
+                  {
+                    name: "notBetween",
+                    type: {
+                      kind: "LIST",
+                      name: null,
+                      ofType: {
+                        kind: "SCALAR",
+                        name: "Int"
+                      }
+                    }
+                  },
+                  {
+                    name: "in",
+                    type: {
+                      kind: "LIST",
+                      name: null,
+                      ofType: {
+                        kind: "SCALAR",
+                        name: "Int"
+                      }
+                    }
+                  },
+                  {
+                    name: "notIn",
+                    type: {
+                      kind: "LIST",
+                      name: null,
+                      ofType: {
+                        kind: "SCALAR",
+                        name: "Int"
+                      }
+                    }
+                  },
+                  {
+                    name: "overlap",
+                    type: {
+                      kind: "LIST",
+                      name: null,
+                      ofType: {
+                        kind: "SCALAR",
+                        name: "Int"
+                      }
+                    }
+                  },
+                  {
+                    name: "contains",
+                    type: {
+                      kind: "LIST",
+                      name: null,
+                      ofType: {
+                        kind: "SCALAR",
+                        name: "Int"
+                      }
+                    }
+                  },
+                  {
+                    name: "contained",
+                    type: {
+                      kind: "LIST",
+                      name: null,
+                      ofType: {
+                        kind: "SCALAR",
+                        name: "Int"
+                      }
+                    }
+                  },
+                  {
+                    name: "any",
+                    type: {
+                      kind: "LIST",
+                      name: null,
+                      ofType: {
+                        kind: "SCALAR",
+                        name: "Int"
                       }
                     }
                   }
