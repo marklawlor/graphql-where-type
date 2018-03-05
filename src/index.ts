@@ -1,6 +1,7 @@
 import {
   GraphQLBoolean,
   GraphQLInt,
+  GraphQLScalarType,
   GraphQLOutputType,
   GraphQLObjectType,
   GraphQLInputFieldConfig,
@@ -12,11 +13,31 @@ import {
   GraphQLInputType,
   GraphQLInputFieldConfigMap,
   GraphQLFloat,
+  GraphQLEnumType,
   Thunk
 } from "graphql"
 
-export interface WhereInputTypeConfig extends GraphQLInputObjectTypeConfig {
+import { pascalCase } from "change-case"
+
+export type Diff<T extends string, U extends string> = ({ [P in T]: P } &
+  { [P in U]: never } & { [x: string]: never })[T]
+export type Omit<U, K extends keyof U> = Pick<U, Diff<keyof U, K>>
+
+export type FieldlessGraphQLInputObjectTypeConfig = Omit<
+  GraphQLInputObjectTypeConfig,
+  "fields"
+>
+
+export interface WhereInputTypeConfig
+  extends FieldlessGraphQLInputObjectTypeConfig {
   baseType: GraphQLObjectType
+  description?: string
+  scalarOperatorMap?: [
+    {
+      scalar: GraphQLScalarType
+      operators: string[]
+    }
+  ]
 }
 
 const scalarOperatorMap: { [index: string]: string[] } = {}
@@ -32,11 +53,11 @@ const arrayOperators = [
   "any"
 ]
 
-const inputOperators = new Map<GraphQLInputType, string[]>([
-  [GraphQLString, ["eq", "nq", "like", "notLike", "iLike", "notILike"]],
-  [GraphQLBoolean, ["eq", "nq", "not"]],
+const inputOperators = new Map<string, string[]>([
+  [GraphQLString.name, ["eq", "nq", "like", "notLike", "iLike", "notILike"]],
+  [GraphQLBoolean.name, ["eq", "nq", "not"]],
   [
-    GraphQLFloat,
+    GraphQLFloat.name,
     [
       "eq",
       "nq",
@@ -55,7 +76,7 @@ const inputOperators = new Map<GraphQLInputType, string[]>([
     ]
   ],
   [
-    GraphQLInt,
+    GraphQLInt.name,
     [
       "eq",
       "nq",
@@ -78,17 +99,34 @@ const inputOperators = new Map<GraphQLInputType, string[]>([
 export default function generateWhereInputType({
   name,
   description,
-  baseType
+  baseType,
+  scalarOperatorMap: customScalarOperatorMap
 }: WhereInputTypeConfig): GraphQLInputObjectType {
+  const operatorMap = new Map(inputOperators)
+
+  if (customScalarOperatorMap) {
+    customScalarOperatorMap.forEach(config =>
+      operatorMap.set(config.scalar.name, config.operators)
+    )
+  }
+
   const inputObjectType = new GraphQLInputObjectType({
     name,
     description,
-    fields: () =>
-      Object.entries(baseType.getFields()).reduce(
+    fields: () => {
+      return Object.entries(baseType.getFields()).reduce(
         (acc, [key, field]) => {
-          const inputType = field.type as GraphQLInputType
+          debugger
+          let inputType = field.type as
+            | GraphQLScalarType
+            | GraphQLEnumType
+            | GraphQLInputObjectType
 
-          const operators = inputOperators.get(inputType)
+          if (inputType instanceof GraphQLList) {
+            inputType = inputType.ofType
+          }
+
+          const operators = operatorMap.get(inputType.name)
 
           if (!operators) {
             return acc
@@ -106,7 +144,7 @@ export default function generateWhereInputType({
 
           acc[key] = {
             type: new GraphQLInputObjectType({
-              name: name + key + "Operations",
+              name: pascalCase(name + " " + key + " Operations"),
               fields: (): GraphQLInputFieldConfigMap => ({
                 and: { type: inputObjectType },
                 or: { type: new GraphQLList(inputObjectType) },
@@ -118,6 +156,7 @@ export default function generateWhereInputType({
         },
         {} as GraphQLInputFieldConfigMap
       )
+    }
   })
 
   return inputObjectType

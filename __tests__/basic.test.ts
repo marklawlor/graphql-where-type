@@ -29,6 +29,10 @@ const TestType = new GraphQLObjectType({
     intField: {
       type: GraphQLInt,
       resolve: () => 1
+    },
+    stringField2: {
+      type: GraphQLString,
+      resolve: () => "HelloWorld2"
     }
   })
 })
@@ -98,7 +102,7 @@ describe("Basic", () => {
               name: "stringField",
               type: {
                 kind: "INPUT_OBJECT",
-                name: "stringFieldOperations",
+                name: "TestWhereArgsStringFieldOperations",
                 inputFields: [
                   {
                     name: "and",
@@ -174,7 +178,7 @@ describe("Basic", () => {
               name: "booleanField",
               type: {
                 kind: "INPUT_OBJECT",
-                name: "booleanFieldOperations",
+                name: "TestWhereArgsBooleanFieldOperations",
                 inputFields: [
                   {
                     name: "and",
@@ -226,7 +230,7 @@ describe("Basic", () => {
               name: "floatField",
               type: {
                 kind: "INPUT_OBJECT",
-                name: "floatFieldOperations",
+                name: "TestWhereArgsFloatFieldOperations",
                 inputFields: [
                   {
                     name: "and",
@@ -390,7 +394,7 @@ describe("Basic", () => {
               name: "intField",
               type: {
                 kind: "INPUT_OBJECT",
-                name: "intFieldOperations",
+                name: "TestWhereArgsIntFieldOperations",
                 inputFields: [
                   {
                     name: "and",
@@ -545,6 +549,82 @@ describe("Basic", () => {
                         kind: "SCALAR",
                         name: "Int"
                       }
+                    }
+                  }
+                ]
+              }
+            },
+            {
+              name: "stringField2",
+              type: {
+                kind: "INPUT_OBJECT",
+                name: "TestWhereArgsStringField2Operations",
+                inputFields: [
+                  {
+                    name: "and",
+                    type: {
+                      kind: "INPUT_OBJECT",
+                      name: "TestWhereArgs",
+                      ofType: null
+                    }
+                  },
+                  {
+                    name: "or",
+                    type: {
+                      kind: "LIST",
+                      name: null,
+                      ofType: {
+                        kind: "INPUT_OBJECT",
+                        name: "TestWhereArgs"
+                      }
+                    }
+                  },
+                  {
+                    name: "eq",
+                    type: {
+                      kind: "SCALAR",
+                      name: "String",
+                      ofType: null
+                    }
+                  },
+                  {
+                    name: "nq",
+                    type: {
+                      kind: "SCALAR",
+                      name: "String",
+                      ofType: null
+                    }
+                  },
+                  {
+                    name: "like",
+                    type: {
+                      kind: "SCALAR",
+                      name: "String",
+                      ofType: null
+                    }
+                  },
+                  {
+                    name: "notLike",
+                    type: {
+                      kind: "SCALAR",
+                      name: "String",
+                      ofType: null
+                    }
+                  },
+                  {
+                    name: "iLike",
+                    type: {
+                      kind: "SCALAR",
+                      name: "String",
+                      ofType: null
+                    }
+                  },
+                  {
+                    name: "notILike",
+                    type: {
+                      kind: "SCALAR",
+                      name: "String",
+                      ofType: null
                     }
                   }
                 ]
